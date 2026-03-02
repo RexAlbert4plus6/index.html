@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Interaction</title>
+
+<style>
+html,body{
+  margin:0;
+  padding:0;
+  height:100%;
+  background:#000;
+  font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+#stage{
+  height:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:url("https://picui.ogmua.cn/s1/2026/03/03/69a5ef3997be6.webp") center/cover no-repeat;
+}
+
+#phone{
+  position:relative;
+  width:420px;
+  height:760px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+#character-container{
+  position:relative;
+  width:78%;
+  cursor:pointer;
+}
+
+#character-image{
+  width:100%;
+  display:block;
+}
+
+.q-bounce{
+  animation:bounce .35s ease;
+}
+
+@keyframes bounce{
+  0%{transform:scale(1,1);}
+  30%{transform:scale(1.06,.94);}
+  60%{transform:scale(.97,1.03);}
+  100%{transform:scale(1,1);}
+}
+
+.overlay{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  pointer-events:none;
+}
+
+#dialogue{
+  position:absolute;
+  bottom:18%;
+  left:50%;
+  transform:translateX(-50%);
+  background:#fff;
+  padding:12px 18px;
+  border-radius:12px;
+  font-size:14px;
+  color:#632630;
+  opacity:0;
+  transition:opacity .3s ease;
+  white-space:nowrap;
+}
+
+#buttons{
+  position:absolute;
+  right:-190px;
+  display:flex;
+  flex-direction:column;
+  gap:26px;
+}
+
+#buttons img{
+  width:160px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div id="stage">
+  <div id="phone">
+
+    <div id="character-container">
+      <img id="character-image"
+           src="https://picui.ogmua.cn/s1/2026/03/03/69a5ef3a1ef93.webp">
+      <img id="overlay-image" class="overlay" style="display:none;">
+      <div id="dialogue"></div>
+    </div>
+
+    <div id="buttons">
+      <img data-type="1" src="https://picui.ogmua.cn/s1/2026/03/03/69a5ef199dc81.webp">
+      <img data-type="2" src="https://picui.ogmua.cn/s1/2026/03/03/69a5ef199dc81.webp">
+      <img data-type="3" src="https://picui.ogmua.cn/s1/2026/03/03/69a5ef199dc81.webp">
+    </div>
+
+  </div>
+</div>
+
+<script>
+
+/* ===== 图片资源 ===== */
+
+const baseImg = "https://picui.ogmua.cn/s1/2026/03/03/69a5ef3a1ef93.webp";
+
+const randomImages = [
+ "https://picui.ogmua.cn/s1/2026/03/03/69a5ef1c60213.webp",
+ "https://picui.ogmua.cn/s1/2026/03/03/69a5ef1c8a4a8.webp",
+ "https://picui.ogmua.cn/s1/2026/03/03/69a5ef2789d10.webp",
+ "https://picui.ogmua.cn/s1/2026/03/03/69a5ef2c06d42.webp",
+ "https://picui.ogmua.cn/s1/2026/03/03/69a5ef2d8c789.webp"
+];
+
+const overlayData = {
+ 1:{
+  img:"https://picui.ogmua.cn/s1/2026/03/03/69a5ef1bb7f32.webp",
+  texts:[
+   "Uh... what did you just do?",
+   "This feels... strange. On my face."
+  ]
+ },
+ 2:{
+  img:"https://picui.ogmua.cn/s1/2026/03/03/69a5ef1b9319e.webp",
+  texts:[
+   "Looks like it's raining.",
+   "Is this what silence is supposed to look like?"
+  ]
+ },
+ 3:{
+  img:"https://picui.ogmua.cn/s1/2026/03/03/69a5ef2977430.webp",
+  texts:[
+   "I hope this is what you wanted to see.",
+   "Am I supposed to meow now?"
+  ]
+ }
+};
+
+/* ===== 随机人物点击字幕 ===== */
+
+const texts = [
+ "What is it?",
+ "...Don't keep doing that.",
+ "Alright. What do you want me to do?",
+ "Even if you keep clicking, nothing new will appear.",
+ "Hm...",
+ "Let's stop here.",
+ "Take a break.",
+ "Okay.",
+ "Understood."
+];
+
+/* ===== DOM ===== */
+
+const img = document.getElementById("character-image");
+const overlay = document.getElementById("overlay-image");
+const dialog = document.getElementById("dialogue");
+const container = document.getElementById("character-container");
+
+let clickCount = 0;
+let idleTimer;
+let resetTimer;
+
+/* ===== 打字对白 ===== */
+
+function speak(text){
+ dialog.textContent = "";
+ dialog.style.opacity = 1;
+ let i = 0;
+ const typing = setInterval(()=>{
+   dialog.textContent += text[i];
+   i++;
+   if(i >= text.length) clearInterval(typing);
+ },30);
+
+ setTimeout(()=>dialog.style.opacity=0,3500);
+}
+
+function reset(){
+ overlay.style.display="none";
+ img.src = baseImg;
+}
+
+function idleCheck(){
+ clearTimeout(idleTimer);
+ idleTimer = setTimeout(()=>{
+  speak(Math.random()>0.5 ? "Are you still awake?" : "I hope you're not too tired.");
+ },15000);
+}
+
+/* ===== 出场对话 ===== */
+
+const introLines = [
+ "Hey. Congratulations on finding this place.",
+ "This website… doesn’t really do anything special.",
+ "You can just tap around and see what happens. That’s all."
+];
+
+let introIndex = 0;
+
+function playIntro(){
+ if(introIndex >= introLines.length){
+  idleCheck();
+  return;
+ }
+ speak(introLines[introIndex]);
+ introIndex++;
+ setTimeout(playIntro,3500);
+}
+
+playIntro();
+
+/* ===== 人物点击 ===== */
+
+container.onclick = ()=>{
+ clearTimeout(resetTimer);
+ clickCount++;
+
+ img.classList.add("q-bounce");
+ setTimeout(()=>img.classList.remove("q-bounce"),350);
+
+ if(clickCount >= 10){
+  img.src="https://picui.ogmua.cn/s1/2026/03/03/69a5ef1c8a4a8.webp";
+  speak("…Seriously?");
+  clickCount = 0;
+ }else{
+  img.src = randomImages[Math.floor(Math.random()*randomImages.length)];
+  speak(texts[Math.floor(Math.random()*texts.length)]);
+ }
+
+ resetTimer = setTimeout(reset,3000);
+ idleCheck();
+};
+
+/* ===== 按钮点击 ===== */
+
+document.querySelectorAll("#buttons img").forEach(btn=>{
+ btn.onclick = e=>{
+  e.stopPropagation();
+  clearTimeout(resetTimer);
+
+  const d = overlayData[btn.dataset.type];
+  overlay.src = d.img;
+  overlay.style.display="block";
+  speak(d.texts[Math.floor(Math.random()*d.texts.length)]);
+
+  resetTimer = setTimeout(reset,3000);
+  idleCheck();
+ };
+});
+
+</script>
+
+</body>
+</html>
