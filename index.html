@@ -18,7 +18,7 @@ html,body{
   display:flex;
   justify-content:center;
   align-items:center;
-  background:url("https://picui.ogmua.cn/s1/2026/03/03/69a5ef3997be6.webp") center/cover no-repeat;
+  background:url("background.jpg") center/cover no-repeat;
 }
 
 #phone{
@@ -96,16 +96,15 @@ html,body{
   <div id="phone">
 
     <div id="character-container">
-      <img id="character-image"
-           src="https://picui.ogmua.cn/s1/2026/03/03/69a5ef3a1ef93.webp">
+           <img id="character-image" src="normal.png">
       <img id="overlay-image" class="overlay" style="display:none;">
       <div id="dialogue"></div>
     </div>
 
     <div id="buttons">
-      <img data-type="1" src="https://picui.ogmua.cn/s1/2026/03/03/69a5ef199dc81.webp">
-      <img data-type="2" src="https://picui.ogmua.cn/s1/2026/03/03/69a5ef199dc81.webp">
-      <img data-type="3" src="https://picui.ogmua.cn/s1/2026/03/03/69a5ef199dc81.webp">
+      <img data-type="1" src="button.png">
+      <img data-type="2" src="button.png">
+      <img data-type="3" src="button.png">
     </div>
 
   </div>
@@ -115,33 +114,33 @@ html,body{
 
 /* ===== 图片资源 ===== */
 
-const baseImg = "https://picui.ogmua.cn/s1/2026/03/03/69a5ef3a1ef93.webp";
+const baseImg = "normal.png";
 
 const randomImages = [
- "https://picui.ogmua.cn/s1/2026/03/03/69a5ef1c60213.webp",
- "https://picui.ogmua.cn/s1/2026/03/03/69a5ef1c8a4a8.webp",
- "https://picui.ogmua.cn/s1/2026/03/03/69a5ef2789d10.webp",
- "https://picui.ogmua.cn/s1/2026/03/03/69a5ef2c06d42.webp",
- "https://picui.ogmua.cn/s1/2026/03/03/69a5ef2d8c789.webp"
+ "angry.png",
+ "sad.png",
+ "shy.png",
+ "shy2.png",
+ "shock.png"
 ];
 
 const overlayData = {
  1:{
-  img:"https://picui.ogmua.cn/s1/2026/03/03/69a5ef1bb7f32.webp",
+  img:"catface.png",
   texts:[
    "Uh... what did you just do?",
    "This feels... strange. On my face."
   ]
  },
  2:{
-  img:"https://picui.ogmua.cn/s1/2026/03/03/69a5ef1b9319e.webp",
+  img:"drop.png",
   texts:[
    "Looks like it's raining.",
    "Is this what silence is supposed to look like?"
   ]
  },
  3:{
-  img:"https://picui.ogmua.cn/s1/2026/03/03/69a5ef2977430.webp",
+  img:"ears.png",
   texts:[
    "I hope this is what you wanted to see.",
    "Am I supposed to meow now?"
@@ -233,7 +232,7 @@ container.onclick = ()=>{
  setTimeout(()=>img.classList.remove("q-bounce"),350);
 
  if(clickCount >= 10){
-  img.src="https://picui.ogmua.cn/s1/2026/03/03/69a5ef1c8a4a8.webp";
+  img.src="sad.png";
   speak("…Seriously?");
   clickCount = 0;
  }else{
@@ -266,3 +265,4 @@ document.querySelectorAll("#buttons img").forEach(btn=>{
 
 </body>
 </html>
+
